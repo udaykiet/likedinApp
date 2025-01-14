@@ -1,0 +1,34 @@
+spring.application.name: api-gateway
+jwt:
+  secretKey: feurg283rtufbouefge8gfugbfeorugro08ghourebgoergre08gregbreobgu
+
+# eureka client configuration
+eureka.client.service-url.default-zone: http://localhost:8761/eureka/
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: post-service
+          uri: lb://POST-SERVICE
+          predicates:
+              - Path=/api/v1/posts/**     # Forward requests with this path to POST-SERVICE
+          filters:
+            - StripPrefix=2
+            - name: AuthenticationFilter
+
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/v1/users/**    # Forward requests with this path to USER-SERVICE
+          filters:
+            - StripPrefix=2
+
+        - id: connection-service
+          uri: lb://CONNECTION-SERVICE
+          predicates:
+            - Path=/api/v1/connections/**    # Forward requests with this path to USER-SERVICE
+          filters:
+            - StripPrefix=2
+            - name: AuthenticationFilter
